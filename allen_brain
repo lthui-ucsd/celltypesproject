@@ -1,0 +1,23 @@
+# first we need a bit of import boilerplate
+import os
+
+import numpy as np
+import xarray as xr
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.ndimage.filters import gaussian_filter
+
+from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProjectCache
+from allensdk.brain_observatory.ecephys.ecephys_session import (
+    EcephysSession, 
+    removed_unused_stimulus_presentation_columns
+)
+from allensdk.brain_observatory.ecephys.visualization import plot_mean_waveforms, plot_spike_counts, raster_plot
+from allensdk.brain_observatory.visualization import plot_running_speed
+
+# tell pandas to show all columns when we display a DataFrame
+pd.set_option("display.max_columns", None)
+
+manifest_path = os.path.join("example_ecephys_project_cache", "manifest.json")
+
+cache = EcephysProjectCache.from_warehouse(manifest=manifest_path)
