@@ -1,0 +1,19 @@
+import pandas as pd
+
+df = pd.read_excel ('neurophysiology_data.xlsx')
+mouse_df = pd.DataFrame (df)
+mouse_df
+
+#pull out all the rows where "CA3" is in the NeuroType column and create a new DataFrame 
+df_CA3 = df[df['NeuronType'].str.contains('CA3')].reset_index(drop=True)
+df_CA3
+
+#did the same thing for CA1 cells 
+df_CA1 = df[df['NeuronType'].str.contains('CA1')].reset_index(drop=True)
+df_CA1
+
+#get all the columns of df_CA3 with ephys we are interested in
+df_CA3[['RestingMembranePotential','SpikeAmplitude','SpikeHalfWidth','SpikeThreshold','SagRatio']]
+
+#did the same thing for df_CA1
+df_CA1[['RestingMembranePotential','SpikeAmplitude','SpikeHalfWidth','SpikeThreshold','SagRatio']]
