@@ -1,23 +1,42 @@
-# first we need a bit of import boilerplate
-import os
-
-import numpy as np
-import xarray as xr
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.ndimage.filters import gaussian_filter
-
+# Import the Neuropixels Cache
 from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProjectCache
-from allensdk.brain_observatory.ecephys.ecephys_session import (
-    EcephysSession, 
-    removed_unused_stimulus_presentation_columns
-)
-from allensdk.brain_observatory.ecephys.visualization import plot_mean_waveforms, plot_spike_counts, raster_plot
-from allensdk.brain_observatory.visualization import plot_running_speed
 
-# tell pandas to show all columns when we display a DataFrame
-pd.set_option("display.max_columns", None)
+# We have all of this data on the datahub! This is where it lives.
+manifest_path = '/datasets/allen-brain-observatory/visual-coding-neuropixels/ecephys-cache/manifest.json' 
 
-manifest_path = os.path.join("example_ecephys_project_cache", "manifest.json")
+# Create the EcephysProjectCache object
+cache = EcephysProjectCache.fixed(manifest=manifest_path)
 
-cache = EcephysProjectCache.from_warehouse(manifest=manifest_path)
+# Get the sessions available in this dataset
+sessions = cache.get_session_table()
+print('Total number of sessions: ' + str(len(sessions)))
+sessions.head()
+
+# Create a session list based on some criteria
+
+session_ca1_list = []
+
+for idx,structure_list in enumerate(sessions['ecephys_structure_acronyms']):
+    if 'CA1' in structure_list:
+        session_ca1_list.append(sessions.index[idx])   
+        
+print('There are '+str(len(session_ca1_list))+' sessions that meet this criteria:')
+print(session_ca1_list)
+
+session_ca3_list = []
+
+for idx,structure_list in enumerate(sessions['ecephys_structure_acronyms']):
+    if 'CA3' in structure_list:
+        session_ca3_list.append(sessions.index[idx])   
+        
+print('There are '+str(len(session_ca3_list))+' sessions that meet this criteria:')
+print(session_ca3_list)
+
+session = cache.get_session_data(session_ca3_list[0])
+
+session.units.columns.sort_values()
+
+session.units[session.units.ecephys_structure_acronym=='CA3']
+session.units[session.units.ecephys_structure_acronym=='CA1']
+
+#session.units.__dict__ to find out all the attributes of an object
